@@ -23,6 +23,54 @@ $("#submitCity").click(function () {
     returnForecast(cityName);
 });
 
+// Previous cities show under search 
+$("#previousCities").click(function () {
+    let cityName = event.target.value;
+    returnCurrentWeather(cityName);
+    returnWeatherForecast(cityName);
+})
+
+// Local Storage functionality // 
+if (localStorage.getItem("localWeatherSearches")) {
+    citiesArray = JSON.parse(localStorage.getItem("localWeatherSearches"));
+    writeSearchHistory(citiesArray);
+} else {
+    citiesArray = [];
+
+};
+// Creates history of recent searches 
+function createHistoryButton(cityName) {
+    var citySearch = cityName.trim();
+    var buttonCheck = $(`#previousSearch > BUTTON[value='${citySearch}']`);
+    if (buttonCheck.length == 1) {
+        return;
+    }
+
+    if (!citiesArray.includes(cityName)) {
+        citiesArray.push(cityName);
+        localStorage.setItem("localWeatherSearches", JSON.stringify(citiesArray));
+    }
+
+    $("#previousSearch").prepend(`
+    <button class="btn btn-light cityHistoryBtn" id="cityHistoryButton" value='${cityName}'>${cityName}</button>
+    `);
+}
+// on click function to return current weather when clicking one of the buttons for a previous search
+$(".cityHistoryBtn").on("click", function () {
+    currWeatherDiv.empty();
+    let cityName = $(this).val();
+    returnCurrentWeather(cityName);
+});
+
+function writeSearchHistory(array) {
+    $.each(array, function (i) {
+        createHistoryButton(array[i]);
+    })
+}
+
+document.getElementById("currentWeather").onload = function () { recentSearch() };
+
+
 function returnCurrentWeather(cityName) {
     let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&APPID=${apiKey}`;
 
@@ -39,6 +87,9 @@ function returnCurrentWeather(cityName) {
         <p>Humidity: ${response.main.humidity}%</p>
         <p>Wind Speed: ${response.wind.speed} mph</p>
         `, uvIndex(response.coord))
+        createHistoryButton(response.name);
+        localStorage.setItem("cityObject", JSON.stringify(response));
+        console.log(response);
     })
 };
 // API call to retrieve the UV index, this is called in the "reutnrCurrentWeather" function.
@@ -72,6 +123,7 @@ function returnForecast(cityName) {
 
     $.get(queryURL).then(function (response) {
         let forecastInfo = response.list;
+        console.log(response);
         forecastDiv.empty();
         $.each(forecastInfo, function (i) {
             if (!forecastInfo[i].dt_txt.includes("12:00:00")) {
