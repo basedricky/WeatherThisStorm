@@ -83,10 +83,9 @@ function returnForecast(cityName) {
             let weatherIcon = `https://openweathermap.org/img/wn/${forecastInfo[i].weather[0].icon}.png`;
             // append data to div when searched
             forecastDiv.append(`
-            <div class="col-md">
                 <div class="card text-white bg-primary">
                     <div class="card-body">
-                        <h4>${forecastDate.getMonth() + 1}/${forecastDate.getDate()}/${forecastDate.getFullYear()}</h4>
+                        <h6>${forecastDate.getMonth() + 1}/${forecastDate.getDate()}/${forecastDate.getFullYear()}</h6>
                         <img src=${weatherIcon} alt="Icon">
                         <p>Temp: ${forecastInfo[i].main.temp}&#176;F</p>
                         <p>Humidity: ${forecastInfo[i].main.humidity}%</p>
