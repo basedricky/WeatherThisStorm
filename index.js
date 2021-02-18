@@ -3,7 +3,7 @@ const apiKey = "9b416adf086fffbb0c564aa90f7624d8";
 // Current Weather Info //
 var currWeatherDiv = $("#currentWeather");
 // Five Day Forcast Info //
-var forecastDiv = $("#forecast");
+var forecastDiv = $("#fiveDayForecast");
 // City Array //
 var citiesArray;
 // so i can use ENTER to submit
@@ -20,6 +20,7 @@ $("#submitCity").click(function () {
     event.preventDefault();
     let cityName = $("#cityInput").val();
     returnCurrentWeather(cityName);
+    returnForecast(cityName);
 });
 
 function returnCurrentWeather(cityName) {
@@ -37,11 +38,11 @@ function returnCurrentWeather(cityName) {
         <p>Temperature: ${response.main.temp}&#176;F</p>
         <p>Humidity: ${response.main.humidity}%</p>
         <p>Wind Speed: ${response.wind.speed} mph</p>
-        `, returnUVIndex(response.coord))
+        `, uvIndex(response.coord))
     })
 };
 // API call to retrieve the UV index, this is called in the "reutnrCurrentWeather" function.
-function returnUVIndex(coordinates) {
+function uvIndex(coordinates) {
     let queryURL = `https://api.openweathermap.org/data/2.5/uvi?lat=${coordinates.lat}&lon=${coordinates.lon}&APPID=${apiKey}`;
 
     $.get(queryURL).then(function (response) {
@@ -61,6 +62,38 @@ function returnUVIndex(coordinates) {
             uvStrength = "yellow";
             textColor = "black"
         }
-        currWeatherDiv.append(`<p>UV Index: <span class="text-${textColor} uvPadding" style="background-color: ${uvStrength};">${currUVIndex}</span></p>`);
+        currWeatherDiv.append(`<p>UV Index: <span class="text-${textColor}" style="background-color: ${uvStrength};">${currUVIndex}</span></p>`);
     })
 }
+
+// API call for the 5 day forecast
+function returnForecast(cityName) {
+    let queryURL = `https://api.openweathermap.org/data/2.5/forecast?q=${cityName}&units=imperial&APPID=6c0ac38b22e3e819b50460a5a899f855`;
+
+    $.get(queryURL).then(function (response) {
+        let forecastInfo = response.list;
+        forecastDiv.empty();
+        $.each(forecastInfo, function (i) {
+            if (!forecastInfo[i].dt_txt.includes("12:00:00")) {
+                return;
+            }
+            //Forecast Dates
+            let forecastDate = new Date(forecastInfo[i].dt * 1000);
+            //displays icon
+            let weatherIcon = `https://openweathermap.org/img/wn/${forecastInfo[i].weather[0].icon}.png`;
+            // append data to div when searched
+            forecastDiv.append(`
+            <div class="col-md">
+                <div class="card text-white bg-primary">
+                    <div class="card-body">
+                        <h4>${forecastDate.getMonth() + 1}/${forecastDate.getDate()}/${forecastDate.getFullYear()}</h4>
+                        <img src=${weatherIcon} alt="Icon">
+                        <p>Temp: ${forecastInfo[i].main.temp}&#176;F</p>
+                        <p>Humidity: ${forecastInfo[i].main.humidity}%</p>
+                    </div>
+                </div>
+            </div>
+            `)
+        })
+    })
+};
