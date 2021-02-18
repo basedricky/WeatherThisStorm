@@ -68,8 +68,6 @@ function writeSearchHistory(array) {
     })
 }
 
-document.getElementById("currentWeather").onload = function () { recentSearch() };
-
 
 function returnCurrentWeather(cityName) {
     let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&APPID=${apiKey}`;
