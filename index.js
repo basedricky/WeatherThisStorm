@@ -19,21 +19,29 @@ $(document).ready(function () {
 $("#submitCity").click(function () {
     event.preventDefault();
     let cityName = $("#cityInput").val();
+    localStorage.setItem("currentCity", cityName)
     returnCurrentWeather(cityName);
     returnForecast(cityName);
+
 });
 
 // Previous cities show under search 
 $("#previousCities").click(function () {
     let cityName = event.target.value;
     returnCurrentWeather(cityName);
-    returnWeatherForecast(cityName);
+    returnForecast(cityName);
+
 })
 
 // Local Storage functionality // 
 if (localStorage.getItem("localWeatherSearches")) {
     citiesArray = JSON.parse(localStorage.getItem("localWeatherSearches"));
+    let currentCity = localStorage.getItem("currentCity")
     writeSearchHistory(citiesArray);
+    returnCurrentWeather(currentCity);
+    returnForecast(currentCity);
+
+
 } else {
     citiesArray = [];
 
@@ -51,15 +59,20 @@ function createHistoryButton(cityName) {
         localStorage.setItem("localWeatherSearches", JSON.stringify(citiesArray));
     }
 
+
     $("#previousSearch").prepend(`
     <button class="btn btn-light cityHistoryBtn" id="cityHistoryButton" value='${cityName}'>${cityName}</button>
-    `);
+        `);
 }
+
 // on click function to return current weather when clicking one of the buttons for a previous search
 $(".cityHistoryBtn").on("click", function () {
     currWeatherDiv.empty();
     let cityName = $(this).val();
     returnCurrentWeather(cityName);
+    returnForecast(cityName);
+
+
 });
 
 function writeSearchHistory(array) {
