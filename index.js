@@ -6,6 +6,7 @@ var currWeatherDiv = $("#currentWeather");
 var forecastDiv = $("#fiveDayForecast");
 // City Array //
 var citiesArray;
+
 // so i can use ENTER to submit
 $(document).ready(function () {
     $("#cityInput").keyup(function (event) {
@@ -33,7 +34,7 @@ $("#previousCities").click(function () {
 
 })
 
-// Local Storage functionality // 
+// Local Storage functionality and with Kelly's help, pulled up last searched city on refresh.
 if (localStorage.getItem("localWeatherSearches")) {
     citiesArray = JSON.parse(localStorage.getItem("localWeatherSearches"));
     let currentCity = localStorage.getItem("currentCity")
