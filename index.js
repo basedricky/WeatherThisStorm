@@ -74,14 +74,14 @@ $(".cityHistoryBtn").on("click", function () {
 
 
 });
-
+// function to write search history and calls the createHistoryButton to create previous search buttons.
 function writeSearchHistory(array) {
     $.each(array, function (i) {
         createHistoryButton(array[i]);
     })
 }
 
-
+// API call for current weather
 function returnCurrentWeather(cityName) {
     let queryURL = `https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=imperial&APPID=${apiKey}`;
 
